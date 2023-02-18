@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head th:replace="header :: head">
+</head>
+<body>
+  <div th:replace="header :: header"></div>
+  <div class="container" th:if="${ not#lists.isEmpty(authorities)}">
+      <table class="table table-striped table-dark">
+        <tr>
+          <th>Id</th>
+          <th>Role Name</th>
+          <th>Role description</th>
+        </tr>
+        <tr th:each="authority : ${authorities}">
+          <td th:text="${authority.id}"></td>
+          <td th:text="${authority.roleCode}"></td>
+          <td th:text="${authority.roleDescription}"></td>
+        </tr>
+      <table>
+  </div>
+</body>
+</html>

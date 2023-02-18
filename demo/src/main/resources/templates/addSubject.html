@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="header :: head"></head>
+<body>
+    <div th:replace="header :: header"></div>
+
+    <div class="container">
+        <form th:action="@{/admin/add-subjects}" th:object="${subjects}" method="post" style="color: black;">
+            <select class="selectpicker" multiple data-live-search="true" name="subjectIds">
+                <option th:each="subject : ${subjects}" th:value="${subject.id}" th:text="${subject.name}"></option>
+            </select>
+            <button type="submit" class="btn btn-primary">Add students</button>
+        </form>
+    </div>
+    
+    <script>
+        $('select').selectpicker();
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+body{
+    background: #5a5a5a;
+    color: aliceblue;
+}
+
+.flexbox-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.flexbox-container aside{
+    width: 30%;
+}
+
+.flexbox-container section{
+    width: 65%;
+}
+
+.subject{
+    text-align: center;
+}
+.subject div{
+    justify-content: center;
+}
+
+.custom-label{
+    margin: auto;
+    font-size: 20px;
+}
+
+.custom-input{
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+.custom-button{
+    margin: auto;
+}
+
+.object{
+    background: #1f1b1b;
+}
+#result {
+    width: 100%;
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="header :: head"></head>
+<body>
+  <div th:replace="header :: header"></div>
+    <div class="container">
+        <form th:action="@{/activate-account}" th:object="${user}" method="post">
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+              <p th:each="err : ${#fields.errors('*')}" th:text="${err}"></p>
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control"  th:field="*{username}" placeholder="username" th:errorclass="is-invalid">
+    
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-user"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control"  th:field="*{firstName}" placeholder="First Name" th:errorclass="is-invalid">
+    
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-user"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control"  th:field="*{lastName}" placeholder="Last Name" th:errorclass="is-invalid">
+  
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-user"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="email" class="form-control" th:field="*{email}" placeholder="Email" th:errorclass="is-invalid">
+  
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-envelope"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="password" class="form-control" th:field="*{password}" placeholder="Password" th:errorclass="is-invalid">
+  
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <button type="submit" class="btn btn-primary btn-block">Register</button>
+            </div>
+  
+            </form>
+      </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="header :: head"></head>
+<body>
+	<div th:replace="header :: header"></div>
+	<div class="container">
+		<form th:action="@{/admin/add-grades}" method="post" id="form" enctype="multipart/form-data" th:object="${subjects}">
+			<div  id="form1">
+
+			</div>
+			<div id="form2">
+
+			</div>
+			<div id="form3">
+
+			</div>
+		</form>
+	</div>
+
+	<script th:if="${subjects}" th:inline="javascript">
+		/*<![CDATA[*/
+		
+			var subjects = /*[[${subjects}]]*/ 'Sebastian';
+		
+		/*]]>*/
+			
+		document.onreadystatechange = function() {
+			if (document.readyState === "complete") {
+				initApplication();
+			}
+		};
+
+		function initApplication(){
+			//read transaction (if any), the dynamic writing
+			if (subjects !== null){ 
+				codeHTML = 	`<select name="subject" onchange="select()" id="selectMenu" class="form-select form-select-sm" aria-label=".form-select-sm example">
+							 <option selected>Open this select menu</option>`;
+				subjects.forEach(function(subject){
+					codeHTML += `<option value="${subject.id}">${subject.name}</option>`
+				})
+				document.getElementById("form1").innerHTML = codeHTML
+			}
+
+		}//end func initApplication
+
+
+		function select(){	
+			var selectElement = document.getElementById("selectMenu");
+
+			var selectedOption = selectElement.options[selectElement.selectedIndex];
+			
+			// get the value of the selected option
+			var selectedValue = selectedOption.value;
+
+			let subject = subjects.find(subject => subject.id == selectedValue);
+			
+			if(subject == undefined){
+				document.getElementById("form2").innerHTML = "";
+				return false;
+			}
+			
+			codeHTML = 	`<select name="exam" onchange="select2()" id="selectMenu" class="form-select form-select-sm" aria-label=".form-select-sm example">
+				<option selected>Open this select menu</option>`;
+				subject.exams.forEach(function(exam){
+					codeHTML += `<option value="${exam.id}">${exam.name}</option>`
+				})
+			document.getElementById("form2").innerHTML = codeHTML;
+		}
+		
+		function select2(){	
+			codeHTML = `
+			<div class="input-group">
+				<div class="custom-file">
+				  <input type="file" class="custom-file-input" id="inputGroupFile01"
+					aria-describedby="inputGroupFileAddon01" name="inputGroupFile01">
+				  <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+				</div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Which column in excel to take?</label>
+                    <input class="form-control" id="exampleFormControlTextarea1" rows="3" type="number" min="0" step="1" name="numExams">
+                </div>
+
+				<button type="submit" class="btn btn-primary">Add Grades</button>
+			</div>`
+			document.getElementById("form3").innerHTML = codeHTML
+		}
+	</script>
+</body>
+</html>

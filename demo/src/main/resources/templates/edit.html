@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head th:replace="header :: head">
+</head>
+<body>
+    <div th:replace="header :: header"></div>
+    <main>
+        <div class="container flexbox-container">
+            <aside>
+                <h3>Group details</h3>
+                <h5>Group id</h5>
+                <p th:text="${group.id}"/>
+                <h5>Group name</h5>
+                <p th:text="${group.name}"/>
+                <h5>Group description</h5>
+                <p th:text="${group.description}"/>
+                <p th:text="${group.adminUser.username}"/>
+            </aside>
+            
+            <section>
+                <table class="table table-striped table-dark" th:if="${ not#lists.isEmpty(users)}">
+                    <tr>
+                        <th>Id</th>
+                        <th>Username</th>
+                        <th>Activated</th>
+                    </tr>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.username}"></td>
+                        <td th:text="${user.enable}"></td>
+                    </tr>            
+                </table>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

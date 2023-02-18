@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head th:replace="header :: head">
+</head>
+<body>
+	<div th:replace="header :: header"></div>
+
+	<div class="container" th:if="${groups}">
+			<table th:if="${ not#lists.isEmpty(groups)}" class="table table-striped table-dark">
+				<tr>
+					<th>Id</th>
+					<th>Group Name</th>
+				</tr>
+				<tr th:each="group : ${groups}">
+					<td th:text="${group.id}"></td>
+					<td><a th:href="@{/admin/group/{GroupId}(GroupId=${group.id})}" th:text="${group.name}"></a></td>
+				</tr>
+			<table>
+	</div>
+
+	<div class="container" th:if="${subjects}">
+		<form th:action="@{/admin/add-subjects}" th:object="${subjects}" method="post" style="color: black;" th:if="${add}">
+			<select class="selectpicker" multiple data-live-search="true" name="subjectIds">
+				<option th:each="subject : ${subjects}" th:value="${subject.id}" th:text="${subject.name}"></option>
+			</select>
+			<button type="submit" class="btn btn-primary">Add students</button>
+		</form>
+
+		<table th:if="${ not#lists.isEmpty(subjects)}" class="table table-striped table-dark">
+			<tr>
+				<th>Id</th>
+				<th>Subject Name</th>
+			</tr>
+			<tr th:each="subject : ${subjects}">
+				<td th:text="${subject.id}"></td>
+				<td><a th:href="@{/admin/subject/{subjectId}(subjectId=${subject.id})}" th:text="${subject.name}"></a></td>
+			</tr>
+		<table>
+	</div>
+		
+	<script th:if="${add}">
+		$('select').selectpicker();
+	</script>
+
+
+	<div class="container" th:if="${groupSubjects}">
+		<table th:if="${ not#lists.isEmpty(groupSubjects)}" class="table table-striped table-dark" id="groupSubjects">
+		</table>
+	</div>
+
+
+	<script th:if="${groupSubjects}" th:inline="javascript">
+		/*<![CDATA[*/
+			var groupSubjects = /*[[${groupSubjects}]]*/ {};
+		/*]]>*/
+		  
+		codeHTML = `<tr>
+						<th>Id</th>
+						<th>Subject Name</th>
+						<th>Subject coefficient</th>
+						<th>Exam Name</th>
+						<th>Exam coefficient</th>
+					</tr>`
+		console.log(groupSubjects[0].exams)
+		
+		groupSubjects.forEach(function(subject){
+			codeHTML +=`<tr>
+							<td rowspan = "${subject.exams.length}">${subject.id}</td>
+							<td rowspan = "${subject.exams.length}">${subject.name}</td>
+							<td rowspan = "${subject.exams.length}">${subject.coefficient}</td>
+							<td>${subject.exams[0].name}</td>
+							<td>${subject.exams[0].coefficient}</td>
+						</tr>`
+			subject.exams.slice(1).forEach(function(exam){
+				codeHTML +=`<tr>
+								<td>${exam.name}</td>
+								<td>${exam.coefficient}</td>
+							</tr>`
+			})
+		});
+		document.getElementById("groupSubjects").innerHTML = codeHTML;
+	</script>
+		
+	<div class="container" th:if="${students}">
+		<table class="table table-striped table-dark" th:if="${ not#lists.isEmpty(students)}">
+			<tr>
+				<th>Id</th>
+				<th>Username</th>
+				<th>CurrecntScore</th>
+				<th>Average</th>
+			</tr>
+			<tr th:each="student : ${students}">
+				<td th:text="${student.id}"></td>
+				<td th:text="${student.username}"></td>
+				<td th:text="${#numbers.formatDecimal(student.currecntScore * 2/3, 2, 2)}"></td>
+				<td th:text="${#numbers.formatDecimal(student.currecntScore/student.maximumScore*20, 2, 2)}"></td>
+			</tr>            
+		</table>
+	</div>
+
+
+	<div class="container" th:if="${subjectsForArrangement}">
+
+		<form th:object="${subjectsForArrangement}" style="color: black;">
+			<select class="selectpicker" multiple data-live-search="true" name="subjectIds">
+				<option th:each="subject : ${subjectsForArrangement}" th:value="${subject.id}" th:text="${subject.name}"></option>
+			</select>
+			<button type="submit" class="btn btn-primary" onclick="select();">Filter</button>
+		</form>
+
+		<table id="table1" class="table table-striped table-dark">
+
+		</table>
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+				var subjectsForArrangement = /*[[${subjectsForArrangement}]]*/ {};
+				var courceId = /*[[${courceId}]]*/ {};
+			/*]]>*/
+
+			function select() {
+				var select = document.querySelector(".selectpicker");
+				var options = select.options;
+				var selectedOptions = [];
+				
+				for (var i = 0; i < options.length; i++) {
+				  if (options[i].selected) {
+					selectedOptions.push(options[i].value);
+				  }
+				}
+			  
+				
+				$.ajax({
+					type: "Get",
+					contentType : 'application/json; charset=utf-8',
+					dataType : 'json',
+					url: "http://localhost:8080/group-subjects",
+					data: {Subject: selectedOptions.join(", "), courceId: courceId }, // Note it is important
+					success : function(result) {
+						var users = result[0];
+						var scores = result[1];
+
+						let sortedLists = Array.from(Array(users.length), (_, i) => [users[i], scores[i]])
+														.sort((a, b) => a[1][0]/a[1][1] - b[1][0]/b[1][1]);
+   
+						users = sortedLists.map(x => x[0]).reverse();
+						scores = sortedLists.map(x => x[1]).reverse();
+   
+						codeHTML = `<tr>
+										<th>Student Name</th>
+										<th>Student number</th>
+										<th>average</th>
+									</tr>`
+	
+						for(let i=0; i<scores.length; i++){
+							codeHTML +=`<tr>
+											<td>${users[i][1]}</td>
+											<td>${users[i][0]}</td>
+											<td>${scores[i][0]/scores[i][1] * 20}</td>
+										</tr>`
+						}
+
+						document.getElementById("table1").innerHTML = codeHTML;
+					}
+				});
+			}
+			  
+		</script>
+	</div>
+
+</body>
+</html>

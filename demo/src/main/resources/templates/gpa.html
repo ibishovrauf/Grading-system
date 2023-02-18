@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head th:replace="header :: head">
+</head>
+<body>
+    <script th:inline="javascript">
+        $.ajax({
+            type: "Get",
+            dataType : 'json',
+            url: "http://localhost:8080/grades-subjects",
+            success : function(result) {
+                var subjects = result[1]
+                var examGrades = result[0]
+                let codeHTML = '';
+                subjects.forEach(function(subject){
+                    subjectHTML = `<div class="subject">
+                                        <h3>
+                                            <b>${subject.name} - ${subject.coefficient} ECTS</b>
+                                        </h3>`
+                        subject.exams.forEach(function(exam){
+                            subjectHTML += `<div class="form-group row">
+                                                <label class="col-sm-3 col-form-label-lg custom-label" for="${exam.name}">${exam.name}</label>`
+                            let found = false;
+                            let gradeFound;
+                            examGrades.forEach(grade => {
+                                if (exam.id === grade.exam.id) {
+                                    found = true;
+                                    gradeFound = grade;
+                                }
+                            });
+                            if (found && gradeFound.annonced) {
+                                subjectHTML += `<div class="col-sm-6 custom-input"><input type="number" class="form-control" placeholder="${exam.name}" min="0" max="20" step="0.01" id="${exam.id}" name="${exam.name}" value="${gradeFound.score}" disabled></div>`
+                            } else if(found && !gradeFound.annonced){
+                                subjectHTML += `<div class="col-sm-6 custom-input"><input type="number" class="form-control" placeholder="${exam.name}" min="0" max="20" step="0.01" id="${exam.id}" name="${exam.name}" value="${gradeFound.score}"></div>`
+                            } else {
+                                subjectHTML += `<div class="col-sm-6 custom-input"><input type="number" class="form-control" placeholder="${exam.name}" min="0" max="20" step="0.01" id="${exam.id}" name="${exam.name}"></div>`
+                            }
+                            subjectHTML += `<label class="col-sm-3 col-form-label-lg custom-label" for="${exam.name}"> - ${exam.coefficient} ECTS</label> </div>`;
+                    });
+                    subjectHTML += '</div>'
+                    codeHTML +=subjectHTML;
+                });
+                codeHTML += `
+                            <div class="col-3 custom-button">
+                                <button onclick="calculate();" class="btn btn-primary btn-block">Calculate</button>
+                            </div>`
+                document.getElementById("form").innerHTML = codeHTML;
+            }
+        })
+        function calculate(){
+
+            var elements = document.getElementsByClassName("subject");
+            var codeHTML = '<div class="object col-sm-6">';
+            
+            for (let element of elements) {
+                var scores = [], credits = [];
+                const children = Array.from(element.children);
+                const childrenWithoutFirst = children.slice(1);
+
+                for (let i = 0; i < childrenWithoutFirst.length; i++) {
+                    scores.push(childrenWithoutFirst[i].children[1].children[0].value);
+                    credits.push(childrenWithoutFirst[i].children[2].innerHTML);
+                }
+                scores = scores.map(x => {
+                    return isNaN(x) ? x : x * 1;
+                });
+                let floatValues = credits.map(function(string) {
+                    return parseFloat(string.match(/\d+\.\d+|\d+/g));
+                });
+                const result = scores.map((element, index) => element * floatValues[index] / 30);
+                const sum = result.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+                const subjectNames = children[0].innerText.split(" ")[0];
+                const subjectCredit = children[0].innerText.split(" ")[2]* 2/3;
+                
+                codeHTML +=`<div> 
+                                ${subjectNames} - ${sum/subjectCredit * 20}
+                            </div>`
+            };
+            document.getElementById("result").innerHTML = codeHTML;
+
+            var inputs = Array.from(document.getElementsByTagName("input"));
+            var activeInputs = inputs.filter(input => !input.disabled);
+            var values = activeInputs.map(input => input.value);
+            var ids = activeInputs.map(input => input.id);
+            values = values.map(function(val) {
+                if (isNaN(parseFloat(val))) {
+                    return "None";
+                }
+                return val;
+            });
+            
+            console.log(ids)
+            console.log(values)
+            
+            $.ajax({
+                type: "Get",
+                contentType : 'application/json; charset=utf-8',
+                dataType : 'json',
+                url: "http://localhost:8080/save",
+                data: {ids : ids.join(", "), values : values.join(", ")}, // Note it is important
+                success : function(result) {
+                    console.log("Response: ", result);
+                }
+            });
+            
+    
+        }
+    </script>
+	<div th:replace="header :: header"></div>
+    <section>
+        <div class="container">
+            <div id="form"></div>
+            <div class="row" id="result">
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head th:replace="header :: head">
+</head>
+<body>
+    <div th:replace="header :: header"></div>
+    <main>
+        <div class="container">
+          <div class="row">
+            <form th:action="@{/admin/create-group}" th:object="${group}" method="post">
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">Role Name</label>
+                    <input type="text" th:field="*{name}" class="form-control" id="exampleFormControlInput1">
+                </div>
+                <div class="form-group" style="color: black;">
+                    <select class="form-select" th:field="*{year}" name="" id="">
+                        <option th:each="year : ${years}"
+                                th:value="${year}"
+                                th:text="${year.name()}"></option>
+                    </select>
+                    <select class="form-select" th:field="*{semester}">
+                        <option th:each="semester : ${semesters}"
+                                th:value="${semester}"
+                                th:text="${semester.name()}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Role description</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" type="text" th:field="*{description}"/>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea2">student_numbers</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" type="text" name="student_numbers"></textarea>
+                </div>
+                <div class="form-check">
+                    <label for="exampleFormControlTextarea2">Maximum Credits</label>
+
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="20">
+                    <label class="form-check-label" for="flexRadioDefault1">
+                        20
+                    </label>
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="30" checked>
+                    <label class="form-check-label" for="flexRadioDefault2">
+                        30
+                    </label>
+                      
+                </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </form>
+          </div>
+        </div>
+    </main>
+</body>
+</html>

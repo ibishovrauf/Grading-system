@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="header :: head"></head>
+<body>
+    <header th:replace="header :: header"></header>
+    <section>
+        <div class="container">
+            <form th:action="@{/admin/create-subject}" th:object="${subject}" method="post">
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">Subject Name</label>
+                    <input th:if="${examForm == null}" type="text" th:field="*{name}" class="form-control" id="exampleFormControlInput1">
+                    <input th:if="${examForm != null}" type="text" th:value="${session.subject.name}" class="form-control" id="exampleFormControlInput1" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Subject exam number</label>
+                    <input th:if="${examForm == null}" class="form-control" id="exampleFormControlTextarea1" rows="3" type="number" min="0" step="1" name="numExams">
+                    <input th:if="${examForm != null}" type="text" th:value="${examForm.exams.size()}" class="form-control" id="exampleFormControlInput1" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea2">Coefficient</label>
+                    <input th:if="${examForm == null}" type="number" th:field="*{coefficient}" class="form-control" min="0" id="exampleFormControlInput1">
+                    <input th:if="${examForm != null}" type="text" th:value="${session.subject.coefficient}" class="form-control" id="exampleFormControlInput1" disabled>
+                </div>
+                <div class="form-group" style="color: black;">
+                    <select class="form-select" th:field="*{year}" th:if="${examForm == null}">
+                        <option th:if="${examForm == null}"
+                                th:each="year : ${years}"
+                                th:value="${year}"
+                                th:text="${year.name()}"></option>
+                    </select>
+
+                    <select th:if="${examForm != null}" disabled class="form-select" th:field="*{year}">
+                        <option th:if="${examForm != null}"
+                                disabled
+                                selected
+                                th:value="${session.subject.year}"
+                                th:text="${session.subject.year.name()}"></option>
+                    </select>
+
+                    <select class="form-select" th:field="*{semester}" th:if="${examForm == null}">
+                        <option th:if="${examForm == null}"
+                                th:each="semester : ${semesters}"
+                                th:value="${semester}"
+                                th:text="${semester.name()}"></option>
+                    </select>
+                    <select th:if="${examForm != null}" disabled class="form-select" th:field="*{semester}">
+                        <option th:if="${examForm != null}"
+                                disabled
+                                selected
+                                th:value="${session.subject.semester}"
+                                th:text="${session.subject.semester.name()}"></option>
+   
+                    </select>
+                </div>
+
+                <button th:if="${examForm != null}" disabled type="submit" class="btn btn-primary">Create</button>
+                <button th:if="${examForm == null}" type="submit" class="btn btn-primary">Create</button>
+            </form>
+
+            <br>
+
+            <form th:if="${examForm}" th:action="@{/admin/create-exams}" method="post" th:object="${examForm}">
+                <div class="row form-group" th:each="exam : ${examForm.exams}">
+                    <div class="col">
+                        <input type="text" th:field="*{exams[__${examStat.index}__].name}" class="form-control" placeholder="Exam name">
+                    </div>
+                    <div class="col">
+                        <input type="number" th:field="*{exams[__${examStat.index}__].coefficient}" class="form-control" placeholder="Exam name" step="0.1">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </section>
+</body>
+</html>
