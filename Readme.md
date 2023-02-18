@@ -2,17 +2,14 @@
 The Grading System is a web application designed to help teachers and students manage grades and assignments. With the Grading System, teachers can easily upload grades and manage student assignments, while students can view their grades, calculate their average grade, and see their place in the group arrangement.
 
 ### Features
-1. Group admin
-   * Group admin can create and manage subjects.
-   * Group admin can assign grades to students.
-   * Group admin can edit subject and exam credits.
-   * Group admin can create and manage groups.
-2. Students
-   * Students can view their grades.
-   * Students can calculate their average grade.
-   * Students can see their place in the group arrangement.
-   * The Grading System will automatically calculate and display the average grade for all students, arrange them in groups, and generate other relevant statistics.
-
+* Group admin can create and manage subjects.
+* Group admin can assign grades to students.
+* Group admin can edit subject and exam credits.
+* Group admin can create and manage groups.
+* Students can view their grades.
+* Students can calculate their average grade.
+* Students can see their place in the group arrangement.
+* The Grading System will automatically calculate and display the average grade for all students, arrange them in groups, and generate other relevant statistics.
 ### Getting Started
 To get started with the Grading System, you will need to activate your account by using the ID provided by your group admin. If your group has not yet been created, you can ask the group admin to create it.
 
